@@ -3,7 +3,8 @@
 export default function handler(req, res) {
   res.setHeader('Cache-Control', 'public, max-age=300');
   res.status(200).json({
-    supabaseUrl: process.env.SUPABASE_URL || '',
+    // Accept the URL with or without a trailing /rest/v1/ copied from the dashboard.
+    supabaseUrl: (process.env.SUPABASE_URL || '').trim().replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, ''),
     supabaseKey: process.env.SUPABASE_ANON_KEY || ''
   });
 }

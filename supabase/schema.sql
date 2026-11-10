@@ -1,5 +1,5 @@
--- YashilKoʻz: dala jurnali jadvali.
--- Supabase → SQL Editor ga toʻliq qoʻyib, "Run" bosing.
+-- YashilKo‘z: dala jurnali jadvali.
+-- Supabase → SQL Editor ga to‘liq qo‘yib, "Run" bosing.
 
 create table if not exists public.journal (
   id uuid primary key default gen_random_uuid(),
@@ -13,7 +13,7 @@ create table if not exists public.journal (
 
 create index if not exists journal_user_created_idx on public.journal (user_id, created_at desc);
 
--- Har bir foydalanuvchi faqat oʻz yozuvlarini koʻradi, qoʻshadi va oʻchiradi.
+-- Har bir foydalanuvchi faqat o‘z yozuvlarini ko‘radi, qo‘shadi va o‘chiradi.
 alter table public.journal enable row level security;
 
 drop policy if exists "journal_select_own" on public.journal;

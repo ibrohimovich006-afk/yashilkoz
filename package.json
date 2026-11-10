@@ -2,7 +2,7 @@
   "name": "yashilkoz",
   "version": "1.0.0",
   "private": true,
-  "description": "YashilKoʻz — barg rasmidan oʻsimlik kasalligini aniqlaydigan AI ilova",
+  "description": "YashilKo‘z — barg rasmidan o‘simlik kasalligini aniqlaydigan AI ilova",
   "type": "module",
   "engines": {
     "node": ">=18"

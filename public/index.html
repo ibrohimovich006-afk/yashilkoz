@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>YashilKoʻz</title>
-<meta name="description" content="Barg rasmidan oʻsimlik kasalligi, zararkunanda va oziq yetishmasligini aniqlaydigan oʻzbekcha AI yordamchi.">
+<title>YashilKo‘z</title>
+<meta name="description" content="Barg rasmidan o‘simlik kasalligi, zararkunanda va oziq yetishmasligini aniqlaydigan o‘zbekcha AI yordamchi.">
 <meta name="theme-color" content="#2E7A3D" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0D1A12" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
@@ -194,11 +194,11 @@ textarea{resize:vertical;min-height:52px}
     <div class="brand">
       <svg class="logo" viewBox="0 0 400 400" aria-hidden="true"><path class="lg-stem" d="M69 292 Q 52 322 38 354"/><g transform="rotate(-35 200 200)"><path class="lg-leaf" d="M40 200 C 110 90, 290 90, 360 200 C 290 310, 110 310, 40 200 Z"/><path class="lg-rib" d="M52 200 L 348 200"/><circle class="lg-white" cx="200" cy="200" r="62"/><circle class="lg-iris" cx="200" cy="200" r="38"/><circle class="lg-white" cx="214" cy="186" r="11"/></g></svg>
       <div>
-        <h1 class="brand-name">YashilKoʻz</h1>
-        <p class="brand-sub">Barg rasmidan oʻsimlik kasalligini aniqlash</p>
+        <h1 class="brand-name">YashilKo‘z</h1>
+        <p class="brand-sub">Barg rasmidan o‘simlik kasalligini aniqlash</p>
       </div>
     </div>
-    <div class="tabs" role="tablist" aria-label="Boʻlimlar">
+    <div class="tabs" role="tablist" aria-label="Bo‘limlar">
       <button class="tab" role="tab" type="button" id="tab-scan" data-view="tekshirish" aria-controls="view-scan" aria-selected="true">Tekshirish</button>
       <button class="tab" role="tab" type="button" id="tab-journal" data-view="jurnal" aria-controls="view-journal" aria-selected="false">Dala jurnali <span class="count" id="j-count" hidden>0</span></button>
     </div>
@@ -211,7 +211,7 @@ textarea{resize:vertical;min-height:52px}
           <div class="placeholder" id="placeholder">
             <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M32 12c12 6 15 20 0 40C17 32 20 18 32 12z"/><path d="M32 16v34"/><path d="M32 28l-6-4M32 28l6-4M32 38l-7-4M32 38l7-4"/><path d="M6 16V6h10M48 6h10v10M58 48v10H48M16 58H6V48"/></svg>
             <p class="zone-title">Kasal barg rasmini oling</p>
-            <p class="zone-hint">Bitta bargni yaqindan, kunduzgi yorugʻda suratga oling. Dogʻlar aniq koʻrinsin.</p>
+            <p class="zone-hint">Bitta bargni yaqindan, kunduzgi yorug‘da suratga oling. Dog‘lar aniq ko‘rinsin.</p>
           </div>
           <img id="preview" alt="Tanlangan barg rasmi" hidden>
         </div>
@@ -231,11 +231,11 @@ textarea{resize:vertical;min-height:52px}
               <option>Qalampir</option>
               <option>Baqlajon</option>
               <option>Paxta</option>
-              <option>Bugʻdoy</option>
-              <option>Makkajoʻxori</option>
+              <option>Bug‘doy</option>
+              <option>Makkajo‘xori</option>
               <option>Uzum</option>
               <option>Olma</option>
-              <option>Oʻrik</option>
+              <option>O‘rik</option>
               <option>Boshqa</option>
             </select>
           </label>
@@ -243,7 +243,7 @@ textarea{resize:vertical;min-height:52px}
             <textarea id="note" rows="2" maxlength="500" placeholder="Masalan: 3 kundan beri, pastki barglardan boshlandi"></textarea>
           </label>
         </div>
-        <button type="submit" class="btn btn-primary" id="go" disabled>Tashxis qoʻyish</button>
+        <button type="submit" class="btn btn-primary" id="go" disabled>Tashxis qo‘yish</button>
       </form>
 
       <div id="status" aria-live="polite"></div>
@@ -251,7 +251,7 @@ textarea{resize:vertical;min-height:52px}
       <section class="stack" aria-labelledby="result-label">
         <div class="result-head">
           <h2 class="eyebrow" id="result-label">Namuna natija</h2>
-          <p class="result-hint" id="result-hint">Oʻz rasmingizni yuklasangiz, natija shu koʻrinishda chiqadi.</p>
+          <p class="result-hint" id="result-hint">O‘z rasmingizni yuklasangiz, natija shu ko‘rinishda chiqadi.</p>
         </div>
         <div id="result"></div>
       </section>
@@ -260,7 +260,7 @@ textarea{resize:vertical;min-height:52px}
     <section id="view-journal" class="stack" role="tabpanel" aria-labelledby="tab-journal" hidden>
       <div>
         <h2 class="section-title">Dala jurnali</h2>
-        <p class="muted">Tekshiruvlaringiz rasm va sana bilan akkauntingizda saqlanadi va istalgan qurilmadan koʻrinadi.</p>
+        <p class="muted">Tekshiruvlaringiz rasm va sana bilan akkauntingizda saqlanadi va istalgan qurilmadan ko‘rinadi.</p>
       </div>
       <p class="callout info" id="j-note" hidden></p>
 
@@ -275,7 +275,7 @@ textarea{resize:vertical;min-height:52px}
           </label>
           <div class="auth-actions">
             <button type="submit" class="btn btn-primary" id="btn-login">Kirish</button>
-            <button type="button" class="btn" id="btn-signup">Roʻyxatdan oʻtish</button>
+            <button type="button" class="btn" id="btn-signup">Ro‘yxatdan o‘tish</button>
           </div>
         </form>
         <p class="callout" id="auth-msg" hidden></p>
@@ -290,7 +290,7 @@ textarea{resize:vertical;min-height:52px}
     </section>
   </main>
 
-  <footer class="foot">YashilKoʻz tashxisi maslahat uchun. Ishonch past yoki holat ogʻir boʻlsa, agronomga murojaat qiling. Preparat dozasini har doim yorliqdan oling.</footer>
+  <footer class="foot">YashilKo‘z tashxisi maslahat uchun. Ishonch past yoki holat og‘ir bo‘lsa, agronomga murojaat qiling. Preparat dozasini har doim yorliqdan oling.</footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -302,16 +302,16 @@ textarea{resize:vertical;min-height:52px}
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const STATUS = {
-    soglom: { label: 'Sogʻlom', cls: 'ok' },
+    soglom: { label: 'Sog‘lom', cls: 'ok' },
     kasallik: { label: 'Kasallik', cls: 'bad' },
     zararkunanda: { label: 'Zararkunanda', cls: 'warn' },
     oziq_yetishmasligi: { label: 'Oziq yetishmasligi', cls: 'info' },
     noaniq: { label: 'Aniqlanmadi', cls: 'muted' }
   };
-  const SEVERITY = { yengil: 'Yengil', orta: 'Oʻrta', ogir: 'Ogʻir' };
+  const SEVERITY = { yengil: 'Yengil', orta: 'O‘rta', ogir: 'Og‘ir' };
   const LOW = 60;
 
-  const LEAF_SAMPLE_SVG = '<svg viewBox="0 0 240 240" role="img" aria-label="Namuna: dogʻli pomidor bargi chizmasi"><path d="M120 16 C 196 56, 214 150, 120 224 C 26 150, 44 56, 120 16 Z" fill="#6FA845"/><path d="M120 28 L120 218" stroke="#4E7F2E" stroke-width="5" stroke-linecap="round"/><path d="M120 80 L76 58 M120 80 L164 58 M120 124 L66 100 M120 124 L174 100 M120 168 L78 150 M120 168 L162 150" stroke="#4E7F2E" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="88" cy="118" r="18" fill="#D8C766" opacity=".9"/><circle cx="88" cy="118" r="11" fill="#6B4226"/><circle cx="152" cy="146" r="22" fill="#D8C766" opacity=".9"/><circle cx="152" cy="146" r="14" fill="#6B4226"/><circle cx="140" cy="84" r="12" fill="#D8C766" opacity=".9"/><circle cx="140" cy="84" r="7" fill="#6B4226"/></svg>';
+  const LEAF_SAMPLE_SVG = '<svg viewBox="0 0 240 240" role="img" aria-label="Namuna: dog‘li pomidor bargi chizmasi"><path d="M120 16 C 196 56, 214 150, 120 224 C 26 150, 44 56, 120 16 Z" fill="#6FA845"/><path d="M120 28 L120 218" stroke="#4E7F2E" stroke-width="5" stroke-linecap="round"/><path d="M120 80 L76 58 M120 80 L164 58 M120 124 L66 100 M120 124 L174 100 M120 168 L78 150 M120 168 L162 150" stroke="#4E7F2E" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="88" cy="118" r="18" fill="#D8C766" opacity=".9"/><circle cx="88" cy="118" r="11" fill="#6B4226"/><circle cx="152" cy="146" r="22" fill="#D8C766" opacity=".9"/><circle cx="152" cy="146" r="14" fill="#6B4226"/><circle cx="140" cy="84" r="12" fill="#D8C766" opacity=".9"/><circle cx="140" cy="84" r="7" fill="#6B4226"/></svg>';
   const ICONS = {
     speaker: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg>',
     trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/></svg>',
@@ -322,26 +322,26 @@ textarea{resize:vertical;min-height:52px}
     rasm_turi: 'osimlik', ekin: 'Pomidor', holat: 'kasallik',
     tashxis: 'Kech kuyish (fitoftoroz)', ilmiy_nomi: 'Phytophthora infestans',
     ishonch: 92, ogirlik: 'orta',
-    belgilar: ['Barg chetida qoʻngʻir-qora, suvli dogʻlar', 'Dogʻlar atrofida sargʻish hoshiya', 'Namli kunlarda barg orqasida oqish gʻubor'],
-    davolash_kimyoviy: ['Mis saqlovchi yoki mankotseb asosidagi fungitsid bilan ishlov bering', 'Ishlovni salqin vaqtda — ertalab yoki kechqurun bajaring', 'Yomgʻirdan keyin ishlovni yorliqdagi oraliqda takrorlang'],
-    davolash_organik: ['Zararlangan barglarni yulib, daladan uzoqda yoʻq qiling', 'Pastki barglarni olib, shamollatishni yaxshilang', 'Tomchilatib sugʻoring, barglarni hoʻllamang'],
-    oldini_olish: ['Pomidor va kartoshkani har yili bir joyga ekmang', 'Koʻchatlar orasida yetarli masofa qoldiring', 'Namli, salqin kunlarda dalani tez-tez koʻzdan kechiring'],
+    belgilar: ['Barg chetida qo‘ng‘ir-qora, suvli dog‘lar', 'Dog‘lar atrofida sarg‘ish hoshiya', 'Namli kunlarda barg orqasida oqish g‘ubor'],
+    davolash_kimyoviy: ['Mis saqlovchi yoki mankotseb asosidagi fungitsid bilan ishlov bering', 'Ishlovni salqin vaqtda — ertalab yoki kechqurun bajaring', 'Yomg‘irdan keyin ishlovni yorliqdagi oraliqda takrorlang'],
+    davolash_organik: ['Zararlangan barglarni yulib, daladan uzoqda yo‘q qiling', 'Pastki barglarni olib, shamollatishni yaxshilang', 'Tomchilatib sug‘oring, barglarni ho‘llamang'],
+    oldini_olish: ['Pomidor va kartoshkani har yili bir joyga ekmang', 'Ko‘chatlar orasida yetarli masofa qoldiring', 'Namli, salqin kunlarda dalani tez-tez ko‘zdan kechiring'],
     muqobil_tashxislar: [{ nomi: 'Erta kuyish (alternarioz)', ishonch: 6 }],
     qoshimcha_rasm: '',
-    ovoz_matni: 'Bu pomidor bargi. Tashxis: kech kuyish, yaʼni fitoftoroz. Zararlangan barglarni olib tashlang va mis saqlovchi fungitsid bilan ishlov bering. Dozani preparat yorligʻidan oling.'
+    ovoz_matni: 'Bu pomidor bargi. Tashxis: kech kuyish, ya’ni fitoftoroz. Zararlangan barglarni olib tashlang va mis saqlovchi fungitsid bilan ishlov bering. Dozani preparat yorlig‘idan oling.'
   };
 
   const ERR = {
-    config: 'Server sozlanmagan: Vercelʼda GEMINI_API_KEY kiritilmagan yoki notoʻgʻri.',
-    rate_limited: 'Bepul limit vaqtincha tugadi. Bir daqiqadan soʻng qayta urinib koʻring.',
+    config: 'Server sozlanmagan: Vercel’da GEMINI_API_KEY kiritilmagan yoki noto‘g‘ri.',
+    rate_limited: 'Bepul limit vaqtincha tugadi. Bir daqiqadan so‘ng qayta urinib ko‘ring.',
     image_rejected: 'Rasm qabul qilinmadi. Boshqa JPG yoki PNG rasm tanlang.',
     too_large: 'Rasm juda katta. Kichikroq rasm tanlang.',
     no_image: 'Avval barg rasmini tanlang.',
     refused: 'Bu rasm tahlil qilinmadi. Boshqa barg rasmini tanlang.',
-    empty: 'Javob boʻsh keldi. Qayta urinib koʻring.',
-    invalid_json: 'Javobni oʻqib boʻlmadi. Qayta urinib koʻring.',
-    network: 'Internet aloqasini tekshirib, qayta urinib koʻring.',
-    upstream: 'Server javob bermadi. Qayta urinib koʻring.'
+    empty: 'Javob bo‘sh keldi. Qayta urinib ko‘ring.',
+    invalid_json: 'Javobni o‘qib bo‘lmadi. Qayta urinib ko‘ring.',
+    network: 'Internet aloqasini tekshirib, qayta urinib ko‘ring.',
+    upstream: 'Server javob bermadi. Qayta urinib ko‘ring.'
   };
   const RETRYABLE = new Set(['rate_limited', 'empty', 'invalid_json', 'network', 'upstream']);
 
@@ -445,7 +445,7 @@ textarea{resize:vertical;min-height:52px}
       el.zone.classList.add('has-img');
       updateGo();
     } catch (e) {
-      showCallout('warn', 'Bu rasmni ochib boʻlmadi. JPG yoki PNG formatidagi boshqa rasm tanlang.');
+      showCallout('warn', 'Bu rasmni ochib bo‘lmadi. JPG yoki PNG formatidagi boshqa rasm tanlang.');
     }
   }
   el.btnCam.addEventListener('click', () => el.cam.click());
@@ -477,12 +477,13 @@ textarea{resize:vertical;min-height:52px}
       h('div', { class: 'grow' },
         h('p', { class: 'w-title', text: 'Barg tahlil qilinmoqda…' }),
         h('p', { class: 'w-sub', text: 'Odatda 5–20 soniya.' })),
-      h('button', { type: 'button', class: 'btn', onclick: () => state.ctl && state.ctl.abort() }, 'Toʻxtatish')));
+      h('button', { type: 'button', class: 'btn', onclick: () => state.ctl && state.ctl.abort() }, 'To‘xtatish')));
   }
 
   /* ---------- Diagnosis ---------- */
-  const str = (x, n) => (typeof x === 'string' ? x.trim().slice(0, n) : '');
-  const list = (x) => (Array.isArray(x) ? x.filter((s) => typeof s === 'string' && s.trim()).slice(0, 5).map((s) => s.trim().slice(0, 220)) : []);
+  const uz = (s) => s.replace(/ʻ/g, '‘').replace(/ʼ/g, '’');
+  const str = (x, n) => (typeof x === 'string' ? uz(x.trim()).slice(0, n) : '');
+  const list = (x) => (Array.isArray(x) ? x.filter((s) => typeof s === 'string' && s.trim()).slice(0, 5).map((s) => uz(s.trim()).slice(0, 220)) : []);
   function normalize(r) {
     r = r && typeof r === 'object' && !Array.isArray(r) ? r : {};
     return {
@@ -537,7 +538,7 @@ textarea{resize:vertical;min-height:52px}
       if (!resp.ok) throw { code: (data && data.error) || 'upstream' };
       const r = normalize(data);
       if (r.rasm_turi === 'osimlik_emas') {
-        showCallout('warn', 'Rasmda oʻsimlik bargi koʻrinmadi. Bargni yaqindan, yorugʻda suratga oling.');
+        showCallout('warn', 'Rasmda o‘simlik bargi ko‘rinmadi. Bargni yaqindan, yorug‘da suratga oling.');
         return;
       }
       el.status.replaceChildren();
@@ -564,7 +565,7 @@ textarea{resize:vertical;min-height:52px}
     if (!btn) return;
     btn.setAttribute('aria-pressed', String(on));
     const label = btn.querySelector('.lbl');
-    if (label) label.textContent = on ? 'Toʻxtatish' : 'Ovoz bilan tinglash';
+    if (label) label.textContent = on ? 'To‘xtatish' : 'Ovoz bilan tinglash';
   }
   function pickVoice() {
     let vs = [];
@@ -572,8 +573,8 @@ textarea{resize:vertical;min-height:52px}
     const uz = vs.find((v) => /^uz/i.test(v.lang));
     if (uz) return { voice: uz, note: '' };
     const tr = vs.find((v) => /^tr/i.test(v.lang));
-    if (tr) return { voice: tr, note: 'Qurilmada oʻzbek ovozi topilmadi, turkcha ovoz bilan oʻqilmoqda.' };
-    return { voice: null, note: 'Qurilmada oʻzbek ovozi yoʻq, talaffuz aniq boʻlmasligi mumkin.' };
+    if (tr) return { voice: tr, note: 'Qurilmada o‘zbek ovozi topilmadi, turkcha ovoz bilan o‘qilmoqda.' };
+    return { voice: null, note: 'Qurilmada o‘zbek ovozi yo‘q, talaffuz aniq bo‘lmasligi mumkin.' };
   }
   function speechText(r) {
     if (r.ovoz_matni) return r.ovoz_matni;
@@ -590,7 +591,7 @@ textarea{resize:vertical;min-height:52px}
       if (was === btn) return;
     }
     const pick = pickVoice();
-    const u = new SpeechSynthesisUtterance(text.replace(/[ʻʼ‘’]/g, ''));
+    const u = new SpeechSynthesisUtterance(text.replace(/[‘’‘’]/g, ''));
     u.lang = pick.voice ? pick.voice.lang : 'uz-UZ';
     if (pick.voice) u.voice = pick.voice;
     u.rate = 0.95;
@@ -615,7 +616,7 @@ textarea{resize:vertical;min-height:52px}
     if (thumb) thumbBox.append(h('img', { src: thumb, alt: 'Tekshirilgan barg rasmi' }));
     else if (sample) thumbBox.innerHTML = LEAF_SAMPLE_SVG;
 
-    const title = r.tashxis || (r.holat === 'soglom' ? 'Kasallik belgisi topilmadi' : 'Aniqlab boʻlmadi');
+    const title = r.tashxis || (r.holat === 'soglom' ? 'Kasallik belgisi topilmadi' : 'Aniqlab bo‘lmadi');
     const head = h('div', { class: 'slip-head' }, thumbBox,
       h('div', { class: 'slip-id' },
         h('div', { class: 'slip-meta' }, h('span', { class: 'chip ' + st.cls, text: st.label }), sample && h('span', { class: 'tag', text: 'NAMUNA' })),
@@ -638,11 +639,11 @@ textarea{resize:vertical;min-height:52px}
     const body = h('div', { class: 'slip-body' }, meter);
     if (low) {
       body.append(h('p', { class: 'callout warn' }, h('strong', { text: 'Ishonch past. ' }),
-        r.qoshimcha_rasm || 'Bargni yaqinroqdan, kunduzgi yorugʻda qayta suratga oling yoki natijani agronomga koʻrsating.'));
+        r.qoshimcha_rasm || 'Bargni yaqinroqdan, kunduzgi yorug‘da qayta suratga oling yoki natijani agronomga ko‘rsating.'));
     } else if (r.ogirlik === 'ogir' && r.holat !== 'soglom') {
-      body.append(h('p', { class: 'callout bad' }, h('strong', { text: 'Ogʻir holat. ' }), 'Choralarni kechiktirmang va agronom bilan maslahatlashing.'));
+      body.append(h('p', { class: 'callout bad' }, h('strong', { text: 'Og‘ir holat. ' }), 'Choralarni kechiktirmang va agronom bilan maslahatlashing.'));
     }
-    if (r.belgilar.length) body.append(h('section', { class: 'block' }, h('h3', { text: 'Rasmda koʻrinayotgan belgilar' }), bullets(r.belgilar)));
+    if (r.belgilar.length) body.append(h('section', { class: 'block' }, h('h3', { text: 'Rasmda ko‘rinayotgan belgilar' }), bullets(r.belgilar)));
     if (r.davolash_kimyoviy.length || r.davolash_organik.length) {
       const cols = h('div', { class: 'treat' });
       if (r.davolash_kimyoviy.length) cols.append(h('div', null, h('h4', { text: 'Kimyoviy' }), bullets(r.davolash_kimyoviy)));
@@ -654,7 +655,7 @@ textarea{resize:vertical;min-height:52px}
       body.append(h('p', { class: 'alt' }, 'Boshqa ehtimollar: ' + r.muqobil_tashxislar.map((m) => m.nomi + ' (' + m.ishonch + '%)').join(', ')));
     }
     if (r.davolash_kimyoviy.length) {
-      body.append(h('p', { class: 'label-note', text: 'Preparat dozasi va ishlov oraligʻini yorliqdan oling. Shubha boʻlsa, agronom bilan maslahatlashing.' }));
+      body.append(h('p', { class: 'label-note', text: 'Preparat dozasi va ishlov oralig‘ini yorliqdan oling. Shubha bo‘lsa, agronom bilan maslahatlashing.' }));
     }
 
     const actions = h('div', { class: 'actions' });
@@ -667,11 +668,11 @@ textarea{resize:vertical;min-height:52px}
     if (entryId) {
       if (state.confirmId === entryId) {
         actions.append(h('div', { class: 'confirm' },
-          h('p', { text: 'Bu yozuv oʻchirilsinmi?' }),
-          h('button', { type: 'button', class: 'btn btn-danger', onclick: () => removeEntry(entryId) }, 'Ha, oʻchirish'),
+          h('p', { text: 'Bu yozuv o‘chirilsinmi?' }),
+          h('button', { type: 'button', class: 'btn btn-danger', onclick: () => removeEntry(entryId) }, 'Ha, o‘chirish'),
           h('button', { type: 'button', class: 'btn', onclick: () => { state.confirmId = null; renderJournal(); } }, 'Bekor qilish')));
       } else {
-        actions.append(h('button', { type: 'button', class: 'btn btn-danger', onclick: () => { state.confirmId = entryId; renderJournal(); } }, icon('trash'), 'Oʻchirish'));
+        actions.append(h('button', { type: 'button', class: 'btn btn-danger', onclick: () => { state.confirmId = entryId; renderJournal(); } }, icon('trash'), 'O‘chirish'));
       }
     }
     if (actions.childNodes.length) body.append(actions);
@@ -693,22 +694,22 @@ textarea{resize:vertical;min-height:52px}
   }
   function authError(e) {
     const m = ((e && e.message) || '').toLowerCase();
-    if (m.includes('invalid login')) return 'Email yoki parol notoʻgʻri.';
+    if (m.includes('invalid login')) return 'Email yoki parol noto‘g‘ri.';
     if (m.includes('not confirmed')) return 'Email hali tasdiqlanmagan. Pochtangizdagi havolani bosing.';
-    if (m.includes('already') && m.includes('regist')) return 'Bu email allaqachon roʻyxatdan oʻtgan. “Kirish” tugmasini bosing.';
-    if (m.includes('rate limit') || m.includes('too many')) return 'Urinishlar juda koʻp. Birozdan soʻng qayta urinib koʻring.';
-    if (m.includes('password')) return 'Parol kamida 6 belgidan iborat boʻlishi kerak.';
+    if (m.includes('already') && m.includes('regist')) return 'Bu email allaqachon ro‘yxatdan o‘tgan. “Kirish” tugmasini bosing.';
+    if (m.includes('rate limit') || m.includes('too many')) return 'Urinishlar juda ko‘p. Birozdan so‘ng qayta urinib ko‘ring.';
+    if (m.includes('password')) return 'Parol kamida 6 belgidan iborat bo‘lishi kerak.';
     if (m.includes('email')) return 'Email manzilini tekshiring.';
-    return 'Kirib boʻlmadi. Qayta urinib koʻring.';
+    return 'Kirib bo‘lmadi. Qayta urinib ko‘ring.';
   }
   function setAuthBusy(on) { el.btnLogin.disabled = el.btnSignup.disabled = on; }
 
   const journalReady = (async () => {
     let cfg = null;
     try { const r = await fetch('/api/config'); if (r.ok) cfg = await r.json(); } catch (e) {}
-    if (!cfg || !cfg.supabaseUrl || !cfg.supabaseKey) { showJNote('Jurnal hali sozlanmagan: Vercelʼda SUPABASE_URL va SUPABASE_ANON_KEY kiritilmagan.'); return; }
+    if (!cfg || !cfg.supabaseUrl || !cfg.supabaseKey) { showJNote('Jurnal hali sozlanmagan: Vercel’da SUPABASE_URL va SUPABASE_ANON_KEY kiritilmagan.'); return; }
     if (!window.supabase || typeof window.supabase.createClient !== 'function') { showJNote('Jurnal kutubxonasi yuklanmadi. Internetni tekshirib, sahifani yangilang.'); return; }
-    try { sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey); } catch (e) { showJNote('Jurnalga ulanib boʻlmadi.'); return; }
+    try { sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey); } catch (e) { showJNote('Jurnalga ulanib bo‘lmadi.'); return; }
     sb.auth.onAuthStateChange((_event, session) => { setTimeout(() => setUser(session ? session.user : null), 0); });
     try { const { data } = await sb.auth.getSession(); setUser(data && data.session ? data.session.user : null); } catch (e) { setUser(null); }
   })();
@@ -736,7 +737,7 @@ textarea{resize:vertical;min-height:52px}
     state.loading = false;
     if (error) {
       const missing = error.code === '42P01' || error.code === 'PGRST205' || /does not exist|could not find the table/i.test(error.message || '');
-      showJNote(missing ? 'Supabaseʼda jurnal jadvali yoʻq: supabase/schema.sql faylini SQL Editorʼda ishga tushiring.' : 'Jurnalni yuklab boʻlmadi. Sahifani yangilang.');
+      showJNote(missing ? 'Supabase’da jurnal jadvali yo‘q: supabase/schema.sql faylini SQL Editor’da ishga tushiring.' : 'Jurnalni yuklab bo‘lmadi. Sahifani yangilang.');
       renderJournal();
       return;
     }
@@ -753,7 +754,7 @@ textarea{resize:vertical;min-height:52px}
     if (!state.user) { toast('Natijani saqlash uchun “Dala jurnali”ga kiring'); return; }
     const result = normalize(entry);
     const { error } = await sb.from('journal').insert({ crop_hint: entry.crop_hint || null, note: entry.note || null, result, thumb: entry.thumb || null });
-    if (error) { toast('Jurnalga saqlab boʻlmadi'); return; }
+    if (error) { toast('Jurnalga saqlab bo‘lmadi'); return; }
     toast('Dala jurnaliga saqlandi');
     loadEntries();
   }
@@ -761,9 +762,9 @@ textarea{resize:vertical;min-height:52px}
   async function removeEntry(id) {
     if (!sb) return;
     const { error } = await sb.from('journal').delete().eq('id', id);
-    if (error) { toast('Oʻchirib boʻlmadi'); return; }
+    if (error) { toast('O‘chirib bo‘lmadi'); return; }
     state.openId = null; state.confirmId = null;
-    toast('Yozuv oʻchirildi');
+    toast('Yozuv o‘chirildi');
     loadEntries();
   }
 
@@ -785,7 +786,7 @@ textarea{resize:vertical;min-height:52px}
     const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: location.origin } });
     setAuthBusy(false);
     if (error) authMsg('bad', authError(error));
-    else if (!data || !data.session) authMsg('info', 'Emailingizga tasdiqlash havolasi yuborildi. Uni bosing, soʻng shu yerda kiring.');
+    else if (!data || !data.session) authMsg('info', 'Emailingizga tasdiqlash havolasi yuborildi. Uni bosing, so‘ng shu yerda kiring.');
   });
   el.btnLogout.addEventListener('click', async () => { if (sb) await sb.auth.signOut(); });
 
@@ -824,7 +825,7 @@ textarea{resize:vertical;min-height:52px}
     if (!n) {
       el.jsum.hidden = true;
       el.jlist.replaceChildren(h('li', { class: 'empty' },
-        h('p', { class: 'empty-title', text: 'Hali tekshiruv yoʻq' }),
+        h('p', { class: 'empty-title', text: 'Hali tekshiruv yo‘q' }),
         h('p', { text: 'Birinchi barg rasmini tekshiring — natija rasm va sana bilan shu yerda saqlanadi.' }),
         h('button', { type: 'button', class: 'btn', onclick: () => go('tekshirish') }, 'Rasm tekshirish')));
       return;
@@ -832,7 +833,7 @@ textarea{resize:vertical;min-height:52px}
     const by = {};
     state.entries.forEach((e) => { by[e.holat] = (by[e.holat] || 0) + 1; });
     el.jsum.hidden = false;
-    el.jsum.replaceChildren(stat(n, 'Jami tekshiruv'), stat(by.kasallik || 0, 'Kasallik'), stat(by.zararkunanda || 0, 'Zararkunanda'), stat(by.oziq_yetishmasligi || 0, 'Oziq yetishmasligi'), stat(by.soglom || 0, 'Sogʻlom'));
+    el.jsum.replaceChildren(stat(n, 'Jami tekshiruv'), stat(by.kasallik || 0, 'Kasallik'), stat(by.zararkunanda || 0, 'Zararkunanda'), stat(by.oziq_yetishmasligi || 0, 'Oziq yetishmasligi'), stat(by.soglom || 0, 'Sog‘lom'));
     el.jlist.replaceChildren(...state.entries.map(entryRow));
     if (state.focusId) {
       const b = Array.from(el.jlist.querySelectorAll('.entry-btn')).find((x) => x.dataset.id === state.focusId);

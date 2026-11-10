@@ -1,7 +1,7 @@
 {
-  "name": "YashilKoʻz",
-  "short_name": "YashilKoʻz",
-  "description": "Barg rasmidan oʻsimlik kasalligini aniqlash",
+  "name": "YashilKo‘z",
+  "short_name": "YashilKo‘z",
+  "description": "Barg rasmidan o‘simlik kasalligini aniqlash",
   "lang": "uz",
   "start_url": "/",
   "display": "standalone",

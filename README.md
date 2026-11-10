@@ -1,6 +1,6 @@
-# YashilKoʻz
+# YashilKo‘z
 
-Barg rasmidan oʻsimlik kasalligi, zararkunanda va oziq yetishmasligini aniqlaydigan oʻzbekcha AI ilova.
+Barg rasmidan o‘simlik kasalligi, zararkunanda va oziq yetishmasligini aniqlaydigan o‘zbekcha AI ilova.
 
 - **Tashxis:** Google Gemini API (bepul tarif)
 - **Dala jurnali va akkaunt:** Supabase (bepul tarif)
@@ -9,9 +9,9 @@ Barg rasmidan oʻsimlik kasalligi, zararkunanda va oziq yetishmasligini aniqlayd
 ## Tuzilishi
 
 ```
-public/index.html        Ilovaning oʻzi (telefon uchun moslangan)
-public/manifest.webmanifest, public/icon.svg   “Bosh ekranga qoʻshish” uchun
-api/diagnose.js          Rasmni Geminiʼga yuboradi, tashxisni JSON qilib qaytaradi
+public/index.html        Ilovaning o‘zi (telefon uchun moslangan)
+public/manifest.webmanifest, public/icon.svg   “Bosh ekranga qo‘shish” uchun
+api/diagnose.js          Rasmni Gemini’ga yuboradi, tashxisni JSON qilib qaytaradi
 api/config.js            Brauzerga Supabase manzili va ochiq kalitini beradi
 lib/core.js              Prompt va javobni tekshirish
 supabase/schema.sql      Jurnal jadvali va xavfsizlik qoidalari
@@ -27,8 +27,8 @@ supabase/schema.sql      Jurnal jadvali va xavfsizlik qoidalari
 ### 2. Supabase (jurnal uchun)
 
 1. [supabase.com](https://supabase.com) da bepul loyiha yarating.
-2. **SQL Editor** ni oching, `supabase/schema.sql` faylidagi hamma matnni qoʻying va **Run** bosing.
-3. Loyiha sozlamalaridagi **API** boʻlimidan **Project URL** va **anon** (yoki **publishable**) kalitni nusxalang.
+2. **SQL Editor** ni oching, `supabase/schema.sql` faylidagi hamma matnni qo‘ying va **Run** bosing.
+3. Loyiha sozlamalaridagi **API** bo‘limidan **Project URL** va **anon** (yoki **publishable**) kalitni nusxalang.
    `service_role` / secret kalitni hech qachon ishlatmang.
 
 ### 3. Vercel
@@ -43,20 +43,20 @@ supabase/schema.sql      Jurnal jadvali va xavfsizlik qoidalari
    | `SUPABASE_URL` | Supabase Project URL |
    | `SUPABASE_ANON_KEY` | Supabase anon / publishable kalit |
 
-4. **Deploy** ni bosing. Bir daqiqadan soʻng `https://<nom>.vercel.app` manzili tayyor boʻladi.
+4. **Deploy** ni bosing. Bir daqiqadan so‘ng `https://<nom>.vercel.app` manzili tayyor bo‘ladi.
 
-### 4. Supabaseʼni sayt manziliga ulash
+### 4. Supabase’ni sayt manziliga ulash
 
 Supabase → **Authentication → URL Configuration** → **Site URL** ga Vercel manzilingizni yozing.
-Shunda roʻyxatdan oʻtish xatidagi havola saytingizga qaytaradi.
+Shunda ro‘yxatdan o‘tish xatidagi havola saytingizga qaytaradi.
 
-Tez sinash uchun **Authentication → Sign In / Providers → Email** boʻlimida **Confirm email** ni oʻchirib qoʻyish mumkin.
-Supabaseʼning bepul pochta xizmati soatiga bir necha xat bilan cheklangan.
+Tez sinash uchun **Authentication → Sign In / Providers → Email** bo‘limida **Confirm email** ni o‘chirib qo‘yish mumkin.
+Supabase’ning bepul pochta xizmati soatiga bir necha xat bilan cheklangan.
 
 ## Eslatmalar
 
-- Gemini bepul tarifida daqiqa va kunlik soʻrov limiti bor. Limit tugasa, ilova “bir daqiqadan soʻng qayta urinib koʻring” deydi.
+- Gemini bepul tarifida daqiqa va kunlik so‘rov limiti bor. Limit tugasa, ilova “bir daqiqadan so‘ng qayta urinib ko‘ring” deydi.
 - Bepul tarifda yuborilgan rasmlar Google xizmatlarini yaxshilash uchun ishlatilishi mumkin.
-- Modelni almashtirish uchun Vercelʼda `GEMINI_MODEL` qiymatini qoʻshing (standart: `gemini-2.5-flash`).
+- Modelni almashtirish uchun Vercel’da `GEMINI_MODEL` qiymatini qo‘shing (standart: `gemini-2.5-flash`).
 - Tashxisdan foydalanish uchun akkaunt shart emas. Jurnalga saqlash uchun akkaunt bilan kirish kerak.
-- Oʻzgartirishlarni GitHubʼga push qilsangiz, Vercel saytni oʻzi yangilaydi.
+- O‘zgartirishlarni GitHub’ga push qilsangiz, Vercel saytni o‘zi yangilaydi.

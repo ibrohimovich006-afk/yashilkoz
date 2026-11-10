@@ -1,0 +1,13 @@
+{
+  "name": "YashilKoʻz",
+  "short_name": "YashilKoʻz",
+  "description": "Barg rasmidan oʻsimlik kasalligini aniqlash",
+  "lang": "uz",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#EDF2E8",
+  "theme_color": "#2E7A3D",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

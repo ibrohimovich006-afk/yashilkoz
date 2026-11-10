@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>YashilKoʻz</title>
+<meta name="description" content="Barg rasmidan oʻsimlik kasalligi, zararkunanda va oziq yetishmasligini aniqlaydigan oʻzbekcha AI yordamchi.">
+<meta name="theme-color" content="#2E7A3D" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D1A12" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400..700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"></script>
+<style>
+/* Layout: phone-first single column (max 720px). Scan form on top, result as an agronomist's field slip; journal is a dated list of slips. */
+:root{
+  --bg:#EDF2E8; --surface:#FAFCF7; --sunk:#E2EADB; --ink:#13271B; --ink-2:#4B5C50; --line:#CFDAC6;
+  --leaf:#2E7A3D; --on-leaf:#F6FBF2; --leaf-soft:#D8EACD; --ok:#1F5E2C;
+  --mark:#5FA83A; --mark-deep:#3F7E25;
+  --warn:#7E520A; --warn-bg:#F6E9C6; --bad:#A3372A; --bad-bg:#F6DDD7; --info:#245C82; --info-bg:#DCE9F2;
+  --focus:#2E7A3D; --shadow:rgb(19 39 27 / .08);
+  --f-display:'Bricolage Grotesque','DM Sans',system-ui,sans-serif;
+  --f-body:'DM Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-mono:'DM Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r-lg:20px; --r-md:14px;
+  color-scheme:light;
+  padding-top:env(safe-area-inset-top, 0px); padding-bottom:env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0D1A12; --surface:#15261B; --sunk:#102019; --ink:#E6EFE1; --ink-2:#A6B8AA; --line:#284032;
+    --leaf:#8FCB5E; --on-leaf:#0D1A12; --leaf-soft:#1F3826; --ok:#A8DB7E;
+    --mark:#9BD36A; --mark-deep:#5E9E3A;
+    --warn:#EFC26A; --warn-bg:#382B10; --bad:#F2907F; --bad-bg:#3C1E19; --info:#8EC3E8; --info-bg:#162E3E;
+    --focus:#9BD36A; --shadow:rgb(0 0 0 / .3); color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 56px}
+.app{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+.stack{display:flex;flex-direction:column;gap:16px}
+
+/* Header */
+.top{display:flex;flex-direction:column;gap:16px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:46px;height:46px;flex:none}
+.lg-stem{fill:none;stroke:var(--mark);stroke-width:12;stroke-linecap:round}
+.lg-leaf{fill:var(--mark)}
+.lg-rib{stroke:var(--mark-deep);stroke-width:6;stroke-linecap:round}
+.lg-white{fill:var(--surface)}
+.lg-iris{fill:var(--ink)}
+.brand-name{font-family:var(--f-display);font-weight:800;font-size:30px;line-height:1;letter-spacing:-0.015em;margin:0}
+.brand-sub{margin:4px 0 0;color:var(--ink-2);font-size:14px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--sunk);padding:4px;border-radius:999px}
+.tab{appearance:none;border:0;background:transparent;color:var(--ink-2);font:600 15px/1 var(--f-body);padding:12px 8px;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px var(--shadow)}
+.count{font:500 12px/1 var(--f-mono);background:var(--leaf-soft);color:var(--ok);padding:4px 7px;border-radius:999px;font-variant-numeric:tabular-nums}
+
+/* Forms */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;display:flex;flex-direction:column;gap:16px}
+.zone{position:relative;border:2px dashed var(--line);border-radius:var(--r-md);background:var(--sunk);min-height:210px;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:border-color .15s}
+.zone.is-drag{border-color:var(--leaf)}
+.zone.has-img{border-style:solid}
+.placeholder{display:flex;flex-direction:column;align-items:center;gap:10px;padding:24px 20px;text-align:center}
+.placeholder svg{width:64px;height:64px;color:var(--leaf)}
+.zone-title{font-weight:700;font-size:18px;margin:0}
+.zone-hint{margin:0;color:var(--ink-2);font-size:14px;max-width:34ch}
+.zone img{display:block;width:100%;max-height:380px;object-fit:contain}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 15px/1.2 var(--f-body);padding:12px 16px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;text-decoration:none}
+.btn:hover:not(:disabled){border-color:var(--leaf)}
+.btn svg{width:19px;height:19px;flex:none}
+.btn-primary{background:var(--leaf);border-color:var(--leaf);color:var(--on-leaf);width:100%;font-size:17px;padding:16px;min-height:54px}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06)}
+.btn-danger{color:var(--bad);border-color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn:focus-visible,.tab:focus-visible,select:focus-visible,textarea:focus-visible,input:focus-visible,.entry-btn:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.row2{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width:560px){.row2{grid-template-columns:1fr 1.4fr}}
+.f{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600;color:var(--ink-2);min-width:0}
+select,textarea,input[type=email],input[type=password]{font:400 16px/1.4 var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px;width:100%}
+textarea{resize:vertical;min-height:52px}
+
+/* Status */
+.working{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:var(--r-md);background:var(--leaf-soft)}
+.scan{width:46px;height:46px;border-radius:12px;background:var(--surface);position:relative;overflow:hidden;flex:none;display:flex;align-items:center;justify-content:center;color:var(--leaf)}
+.scan svg{width:30px;height:30px}
+.scan::after{content:"";position:absolute;left:4px;right:4px;height:3px;border-radius:3px;background:var(--leaf);top:4px;animation:scan 1.4s ease-in-out infinite alternate}
+@keyframes scan{to{top:calc(100% - 7px)}}
+@media (prefers-reduced-motion:reduce){.scan::after{animation:none;top:50%}}
+.grow{flex:1;min-width:0}
+.w-title{margin:0;font-weight:700}
+.w-sub{margin:2px 0 0;font-size:14px;color:var(--ink-2)}
+.callout{border-radius:var(--r-md);padding:12px 14px;font-size:15px;margin:0}
+.callout.warn{background:var(--warn-bg);color:var(--warn)}
+.callout.bad{background:var(--bad-bg);color:var(--bad)}
+.callout.info{background:var(--info-bg);color:var(--info)}
+.callout-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.callout-row p{margin:0;min-width:0;flex:1 1 220px}
+
+/* Result slip */
+.result-head{display:flex;flex-direction:column;gap:2px}
+.eyebrow{font:500 12px/1.2 var(--f-mono);letter-spacing:.1em;color:var(--ink-2);text-transform:uppercase;margin:0}
+.result-hint{margin:0;font-size:14px;color:var(--ink-2)}
+.slip{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
+.slip-head{display:flex;gap:16px;padding:20px;align-items:flex-start}
+.thumb{width:92px;height:92px;border-radius:14px;overflow:hidden;flex:none;background:linear-gradient(160deg,var(--leaf-soft),var(--sunk));display:flex;align-items:center;justify-content:center}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb svg{width:78px;height:78px}
+.slip-id{min-width:0;display:flex;flex-direction:column;gap:6px}
+.slip-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{font:600 12px/1 var(--f-body);padding:6px 10px;border-radius:999px;white-space:nowrap}
+.chip.ok{background:var(--leaf-soft);color:var(--ok)}
+.chip.bad{background:var(--bad-bg);color:var(--bad)}
+.chip.warn{background:var(--warn-bg);color:var(--warn)}
+.chip.info{background:var(--info-bg);color:var(--info)}
+.chip.muted{background:var(--sunk);color:var(--ink-2)}
+.tag{font:500 11px/1 var(--f-mono);letter-spacing:.12em;padding:5px 8px;border-radius:999px;border:1px dashed var(--ink-2);color:var(--ink-2)}
+.dx{font-family:var(--f-display);font-weight:700;font-size:clamp(22px,5.6vw,28px);line-height:1.12;margin:0;text-wrap:balance;overflow-wrap:anywhere}
+.latin{margin:0;font-style:italic;color:var(--ink-2);font-size:14px;overflow-wrap:anywhere}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:0;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line)}
+.fields div{padding:12px 20px;min-width:0}
+.fields div+div{border-left:1px dashed var(--line)}
+.fields dt{font:500 11px/1 var(--f-mono);letter-spacing:.12em;color:var(--ink-2);margin-bottom:6px}
+.fields dd{margin:0;font-weight:600;font-size:15px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+@media (max-width:440px){.fields div{padding:12px}}
+.slip-body{padding:20px;display:flex;flex-direction:column;gap:20px}
+.meter-top{display:flex;justify-content:space-between;align-items:baseline}
+.mono-label{font:500 11px/1 var(--f-mono);letter-spacing:.12em;color:var(--ink-2)}
+.meter-val{font:500 22px/1 var(--f-mono);font-variant-numeric:tabular-nums}
+.meter-track{position:relative;height:10px;border-radius:999px;background:var(--sunk);margin-top:10px}
+.meter-fill{position:absolute;top:0;bottom:0;left:0;border-radius:999px;background:var(--leaf)}
+.is-low .meter-fill{background:var(--warn)}
+.meter-tick{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink);transform:translateX(-1px);border-radius:2px}
+.meter-scale{position:relative;display:flex;justify-content:space-between;font:400 11px/1 var(--f-mono);color:var(--ink-2);margin-top:9px;height:12px}
+.tick-label{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.block h3{font:700 16px/1.3 var(--f-body);margin:0 0 8px}
+.block ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.treat{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width:560px){.treat{grid-template-columns:1fr 1fr}}
+.treat>div{background:var(--bg);border-radius:var(--r-md);padding:14px 16px;min-width:0}
+.treat h4{margin:0 0 8px;font:600 12px/1.2 var(--f-body);color:var(--ink-2);text-transform:uppercase;letter-spacing:.07em}
+.treat ul{padding-left:18px}
+.alt{margin:0;font-size:14px;color:var(--ink-2)}
+.label-note{margin:0;font-size:14px;color:var(--ink-2);border-left:3px solid var(--line);padding-left:12px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.speak-note{font-size:13px;color:var(--ink-2);margin:0;flex-basis:100%}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.confirm p{margin:0;font-weight:600}
+
+/* Journal */
+.section-title{font-family:var(--f-display);font-weight:700;font-size:24px;margin:0;line-height:1.2}
+.muted{color:var(--ink-2);margin:4px 0 0;font-size:15px}
+.auth-title{font-family:var(--f-display);font-weight:700;font-size:20px;margin:0}
+.auth-form{display:flex;flex-direction:column;gap:12px}
+.auth-actions{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:480px){.auth-actions{grid-template-columns:1fr 1fr}}
+.auth-actions .btn-primary{font-size:16px;padding:12px 16px;min-height:46px}
+.account{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px 10px 16px}
+.account span{font-size:14px;color:var(--ink-2);overflow-wrap:anywhere;min-width:0}
+.j-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.stat b{font:500 22px/1.1 var(--f-mono);font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--ink-2)}
+.entries{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.entry{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.entry-btn{appearance:none;width:100%;border:0;background:transparent;color:inherit;font:inherit;text-align:left;display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px;cursor:pointer}
+.entry-btn img,.thumb-ph{width:56px;height:56px;border-radius:10px;object-fit:cover;background:var(--sunk);display:block}
+.entry-main{display:flex;flex-direction:column;min-width:0}
+.entry-title{font-weight:700;overflow-wrap:anywhere}
+.entry-meta{font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.entry-conf{display:flex;flex-direction:column;align-items:flex-end;gap:6px;font:500 14px/1 var(--f-mono);font-variant-numeric:tabular-nums}
+.entry-detail{padding:0 12px 12px}
+.entry-detail .slip{border-radius:var(--r-md)}
+.empty{text-align:center;padding:32px 20px;color:var(--ink-2);background:var(--surface);border:1px dashed var(--line);border-radius:var(--r-md);display:flex;flex-direction:column;align-items:center;gap:10px}
+.empty p{margin:0;max-width:40ch}
+.empty-title{font-weight:700;color:var(--ink)}
+.foot{font-size:13px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:16px;margin-top:8px}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom, 0px));transform:translate(-50%,16px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:600;font-size:15px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:calc(100% - 32px);z-index:20}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){.toast,.zone{transition:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 400 400" aria-hidden="true"><path class="lg-stem" d="M69 292 Q 52 322 38 354"/><g transform="rotate(-35 200 200)"><path class="lg-leaf" d="M40 200 C 110 90, 290 90, 360 200 C 290 310, 110 310, 40 200 Z"/><path class="lg-rib" d="M52 200 L 348 200"/><circle class="lg-white" cx="200" cy="200" r="62"/><circle class="lg-iris" cx="200" cy="200" r="38"/><circle class="lg-white" cx="214" cy="186" r="11"/></g></svg>
+      <div>
+        <h1 class="brand-name">YashilKoʻz</h1>
+        <p class="brand-sub">Barg rasmidan oʻsimlik kasalligini aniqlash</p>
+      </div>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Boʻlimlar">
+      <button class="tab" role="tab" type="button" id="tab-scan" data-view="tekshirish" aria-controls="view-scan" aria-selected="true">Tekshirish</button>
+      <button class="tab" role="tab" type="button" id="tab-journal" data-view="jurnal" aria-controls="view-journal" aria-selected="false">Dala jurnali <span class="count" id="j-count" hidden>0</span></button>
+    </div>
+  </header>
+
+  <main>
+    <section id="view-scan" class="stack" role="tabpanel" aria-labelledby="tab-scan">
+      <form id="scan-form" class="panel" novalidate>
+        <div class="zone" id="zone">
+          <div class="placeholder" id="placeholder">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M32 12c12 6 15 20 0 40C17 32 20 18 32 12z"/><path d="M32 16v34"/><path d="M32 28l-6-4M32 28l6-4M32 38l-7-4M32 38l7-4"/><path d="M6 16V6h10M48 6h10v10M58 48v10H48M16 58H6V48"/></svg>
+            <p class="zone-title">Kasal barg rasmini oling</p>
+            <p class="zone-hint">Bitta bargni yaqindan, kunduzgi yorugʻda suratga oling. Dogʻlar aniq koʻrinsin.</p>
+          </div>
+          <img id="preview" alt="Tanlangan barg rasmi" hidden>
+        </div>
+        <div class="pick">
+          <button type="button" class="btn" id="btn-cam"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h3.5l2-3h7l2 3H21v11H3z"/><circle cx="12" cy="13" r="3.8"/></svg>Kamera</button>
+          <button type="button" class="btn" id="btn-file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>Galereyadan</button>
+          <input type="file" id="photo-cam" accept="image/*" capture="environment" class="sr-only" tabindex="-1" aria-hidden="true">
+          <input type="file" id="photo-file" accept="image/*" class="sr-only" tabindex="-1" aria-hidden="true">
+        </div>
+        <div class="row2">
+          <label class="f" for="crop">Ekin turi
+            <select id="crop">
+              <option value="">Bilmayman</option>
+              <option>Pomidor</option>
+              <option>Kartoshka</option>
+              <option>Bodring</option>
+              <option>Qalampir</option>
+              <option>Baqlajon</option>
+              <option>Paxta</option>
+              <option>Bugʻdoy</option>
+              <option>Makkajoʻxori</option>
+              <option>Uzum</option>
+              <option>Olma</option>
+              <option>Oʻrik</option>
+              <option>Boshqa</option>
+            </select>
+          </label>
+          <label class="f" for="note">Izoh (ixtiyoriy)
+            <textarea id="note" rows="2" maxlength="500" placeholder="Masalan: 3 kundan beri, pastki barglardan boshlandi"></textarea>
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary" id="go" disabled>Tashxis qoʻyish</button>
+      </form>
+
+      <div id="status" aria-live="polite"></div>
+
+      <section class="stack" aria-labelledby="result-label">
+        <div class="result-head">
+          <h2 class="eyebrow" id="result-label">Namuna natija</h2>
+          <p class="result-hint" id="result-hint">Oʻz rasmingizni yuklasangiz, natija shu koʻrinishda chiqadi.</p>
+        </div>
+        <div id="result"></div>
+      </section>
+    </section>
+
+    <section id="view-journal" class="stack" role="tabpanel" aria-labelledby="tab-journal" hidden>
+      <div>
+        <h2 class="section-title">Dala jurnali</h2>
+        <p class="muted">Tekshiruvlaringiz rasm va sana bilan akkauntingizda saqlanadi va istalgan qurilmadan koʻrinadi.</p>
+      </div>
+      <p class="callout info" id="j-note" hidden></p>
+
+      <div class="panel" id="auth" hidden>
+        <h3 class="auth-title">Jurnalga kirish</h3>
+        <form id="auth-form" class="auth-form" novalidate>
+          <label class="f" for="email">Email
+            <input id="email" type="email" autocomplete="email" inputmode="email" required>
+          </label>
+          <label class="f" for="password">Parol (kamida 6 belgi)
+            <input id="password" type="password" autocomplete="current-password" minlength="6" required>
+          </label>
+          <div class="auth-actions">
+            <button type="submit" class="btn btn-primary" id="btn-login">Kirish</button>
+            <button type="button" class="btn" id="btn-signup">Roʻyxatdan oʻtish</button>
+          </div>
+        </form>
+        <p class="callout" id="auth-msg" hidden></p>
+      </div>
+
+      <div class="account" id="account" hidden>
+        <span id="account-email"></span>
+        <button type="button" class="btn" id="btn-logout">Chiqish</button>
+      </div>
+      <div class="j-summary" id="j-summary" hidden></div>
+      <ul class="entries" id="j-list" hidden></ul>
+    </section>
+  </main>
+
+  <footer class="foot">YashilKoʻz tashxisi maslahat uchun. Ishonch past yoki holat ogʻir boʻlsa, agronomga murojaat qiling. Preparat dozasini har doim yorliqdan oling.</footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const clamp = (n, a, b) => Math.min(b, Math.max(a, n));
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const STATUS = {
+    soglom: { label: 'Sogʻlom', cls: 'ok' },
+    kasallik: { label: 'Kasallik', cls: 'bad' },
+    zararkunanda: { label: 'Zararkunanda', cls: 'warn' },
+    oziq_yetishmasligi: { label: 'Oziq yetishmasligi', cls: 'info' },
+    noaniq: { label: 'Aniqlanmadi', cls: 'muted' }
+  };
+  const SEVERITY = { yengil: 'Yengil', orta: 'Oʻrta', ogir: 'Ogʻir' };
+  const LOW = 60;
+
+  const LEAF_SAMPLE_SVG = '<svg viewBox="0 0 240 240" role="img" aria-label="Namuna: dogʻli pomidor bargi chizmasi"><path d="M120 16 C 196 56, 214 150, 120 224 C 26 150, 44 56, 120 16 Z" fill="#6FA845"/><path d="M120 28 L120 218" stroke="#4E7F2E" stroke-width="5" stroke-linecap="round"/><path d="M120 80 L76 58 M120 80 L164 58 M120 124 L66 100 M120 124 L174 100 M120 168 L78 150 M120 168 L162 150" stroke="#4E7F2E" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="88" cy="118" r="18" fill="#D8C766" opacity=".9"/><circle cx="88" cy="118" r="11" fill="#6B4226"/><circle cx="152" cy="146" r="22" fill="#D8C766" opacity=".9"/><circle cx="152" cy="146" r="14" fill="#6B4226"/><circle cx="140" cy="84" r="12" fill="#D8C766" opacity=".9"/><circle cx="140" cy="84" r="7" fill="#6B4226"/></svg>';
+  const ICONS = {
+    speaker: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/></svg>',
+    leaf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c5 3 6 9 0 18C6 12 7 6 12 3z"/><path d="M12 6v14"/></svg>'
+  };
+
+  const SAMPLE = {
+    rasm_turi: 'osimlik', ekin: 'Pomidor', holat: 'kasallik',
+    tashxis: 'Kech kuyish (fitoftoroz)', ilmiy_nomi: 'Phytophthora infestans',
+    ishonch: 92, ogirlik: 'orta',
+    belgilar: ['Barg chetida qoʻngʻir-qora, suvli dogʻlar', 'Dogʻlar atrofida sargʻish hoshiya', 'Namli kunlarda barg orqasida oqish gʻubor'],
+    davolash_kimyoviy: ['Mis saqlovchi yoki mankotseb asosidagi fungitsid bilan ishlov bering', 'Ishlovni salqin vaqtda — ertalab yoki kechqurun bajaring', 'Yomgʻirdan keyin ishlovni yorliqdagi oraliqda takrorlang'],
+    davolash_organik: ['Zararlangan barglarni yulib, daladan uzoqda yoʻq qiling', 'Pastki barglarni olib, shamollatishni yaxshilang', 'Tomchilatib sugʻoring, barglarni hoʻllamang'],
+    oldini_olish: ['Pomidor va kartoshkani har yili bir joyga ekmang', 'Koʻchatlar orasida yetarli masofa qoldiring', 'Namli, salqin kunlarda dalani tez-tez koʻzdan kechiring'],
+    muqobil_tashxislar: [{ nomi: 'Erta kuyish (alternarioz)', ishonch: 6 }],
+    qoshimcha_rasm: '',
+    ovoz_matni: 'Bu pomidor bargi. Tashxis: kech kuyish, yaʼni fitoftoroz. Zararlangan barglarni olib tashlang va mis saqlovchi fungitsid bilan ishlov bering. Dozani preparat yorligʻidan oling.'
+  };
+
+  const ERR = {
+    config: 'Server sozlanmagan: Vercelʼda GEMINI_API_KEY kiritilmagan yoki notoʻgʻri.',
+    rate_limited: 'Bepul limit vaqtincha tugadi. Bir daqiqadan soʻng qayta urinib koʻring.',
+    image_rejected: 'Rasm qabul qilinmadi. Boshqa JPG yoki PNG rasm tanlang.',
+    too_large: 'Rasm juda katta. Kichikroq rasm tanlang.',
+    no_image: 'Avval barg rasmini tanlang.',
+    refused: 'Bu rasm tahlil qilinmadi. Boshqa barg rasmini tanlang.',
+    empty: 'Javob boʻsh keldi. Qayta urinib koʻring.',
+    invalid_json: 'Javobni oʻqib boʻlmadi. Qayta urinib koʻring.',
+    network: 'Internet aloqasini tekshirib, qayta urinib koʻring.',
+    upstream: 'Server javob bermadi. Qayta urinib koʻring.'
+  };
+  const RETRYABLE = new Set(['rate_limited', 'empty', 'invalid_json', 'network', 'upstream']);
+
+  const el = {
+    form: $('#scan-form'), zone: $('#zone'), preview: $('#preview'), placeholder: $('#placeholder'),
+    cam: $('#photo-cam'), file: $('#photo-file'), btnCam: $('#btn-cam'), btnFile: $('#btn-file'),
+    crop: $('#crop'), note: $('#note'), go: $('#go'), status: $('#status'),
+    result: $('#result'), resultLabel: $('#result-label'), resultHint: $('#result-hint'),
+    tabs: Array.from(document.querySelectorAll('.tab')),
+    views: { tekshirish: $('#view-scan'), jurnal: $('#view-journal') },
+    jlist: $('#j-list'), jsum: $('#j-summary'), jcount: $('#j-count'), jnote: $('#j-note'),
+    auth: $('#auth'), authForm: $('#auth-form'), email: $('#email'), password: $('#password'),
+    btnLogin: $('#btn-login'), btnSignup: $('#btn-signup'), authMsg: $('#auth-msg'),
+    account: $('#account'), accountEmail: $('#account-email'), btnLogout: $('#btn-logout'),
+    toast: $('#toast')
+  };
+
+  const state = { blob: null, thumb: null, previewUrl: null, busy: false, ctl: null, user: null, entries: [], loading: false, openId: null, focusId: null, confirmId: null };
+
+  function h(tag, attrs, ...kids) {
+    const node = document.createElement(tag);
+    if (attrs) for (const [k, v] of Object.entries(attrs)) {
+      if (v == null || v === false) continue;
+      if (k === 'class') node.className = v;
+      else if (k === 'text') node.textContent = v;
+      else if (k === 'html') node.innerHTML = v;
+      else if (k === 'style') Object.assign(node.style, v);
+      else if (k.startsWith('on') && typeof v === 'function') node.addEventListener(k.slice(2), v);
+      else node.setAttribute(k, v === true ? '' : String(v));
+    }
+    for (const c of kids.flat(Infinity)) if (c != null && c !== false) node.append(c instanceof Node ? c : String(c));
+    return node;
+  }
+  const icon = (name) => h('span', { style: { display: 'inline-flex' }, html: ICONS[name] });
+
+  function fmtDate(ms) {
+    if (!ms) return '';
+    const d = new Date(ms), p = (n) => String(n).padStart(2, '0');
+    return p(d.getDate()) + '.' + p(d.getMonth() + 1) + '.' + d.getFullYear() + ', ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+
+  let toastTimer = 0;
+  function toast(msg) {
+    el.toast.textContent = msg;
+    el.toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.toast.classList.remove('show'), 2800);
+  }
+
+  /* ---------- Routing ---------- */
+  function go(view) {
+    if (!el.views[view]) view = 'tekshirish';
+    for (const [k, v] of Object.entries(el.views)) v.hidden = k !== view;
+    el.tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.view === view)));
+    if (location.hash.slice(1) !== view) history.replaceState(null, '', '#' + view);
+  }
+  el.tabs.forEach((t) => t.addEventListener('click', () => go(t.dataset.view)));
+  window.addEventListener('hashchange', () => go(location.hash.slice(1)));
+
+  /* ---------- Image picking ---------- */
+  function loadImg(file) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('decode')); };
+      img.src = url;
+    });
+  }
+  function canvasBlob(c, q) {
+    return new Promise((resolve, reject) => c.toBlob((b) => (b ? resolve(b) : reject(new Error('blob'))), 'image/jpeg', q));
+  }
+  function drawScaled(img, maxSide) {
+    const w = img.naturalWidth, ht = img.naturalHeight;
+    const s = Math.min(1, maxSide / Math.max(w, ht));
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(w * s)); c.height = Math.max(1, Math.round(ht * s));
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, c.width, c.height);
+    ctx.drawImage(img, 0, 0, c.width, c.height);
+    return c;
+  }
+  async function prepare(file) {
+    const img = await loadImg(file);
+    if (!img.naturalWidth || !img.naturalHeight) throw new Error('size');
+    const blob = await canvasBlob(drawScaled(img, 1280), 0.85);
+    const thumb = drawScaled(img, 320).toDataURL('image/jpeg', 0.72);
+    return { blob, thumb };
+  }
+  async function onPick(file) {
+    if (!file || state.busy) return;
+    if (file.type && !/^image\//.test(file.type)) { showCallout('warn', 'Faqat rasm faylini tanlang.'); return; }
+    el.status.replaceChildren();
+    try {
+      const prep = await prepare(file);
+      state.blob = prep.blob; state.thumb = prep.thumb;
+      if (state.previewUrl) URL.revokeObjectURL(state.previewUrl);
+      state.previewUrl = URL.createObjectURL(prep.blob);
+      el.preview.src = state.previewUrl;
+      el.preview.hidden = false; el.placeholder.hidden = true;
+      el.zone.classList.add('has-img');
+      updateGo();
+    } catch (e) {
+      showCallout('warn', 'Bu rasmni ochib boʻlmadi. JPG yoki PNG formatidagi boshqa rasm tanlang.');
+    }
+  }
+  el.btnCam.addEventListener('click', () => el.cam.click());
+  el.btnFile.addEventListener('click', () => el.file.click());
+  for (const input of [el.cam, el.file]) {
+    input.addEventListener('change', () => { const f = input.files && input.files[0]; input.value = ''; onPick(f); });
+  }
+  el.zone.addEventListener('dragover', (e) => { e.preventDefault(); el.zone.classList.add('is-drag'); });
+  el.zone.addEventListener('dragleave', () => el.zone.classList.remove('is-drag'));
+  el.zone.addEventListener('drop', (e) => {
+    e.preventDefault(); el.zone.classList.remove('is-drag');
+    onPick(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]);
+  });
+
+  function updateGo() {
+    el.go.disabled = state.busy || !state.blob;
+    el.btnCam.disabled = el.btnFile.disabled = state.busy;
+  }
+
+  /* ---------- Status messages ---------- */
+  function showCallout(kind, text, retry) {
+    const p = h('p', { text });
+    el.status.replaceChildren(h('div', { class: 'callout ' + kind },
+      retry ? h('div', { class: 'callout-row' }, p, h('button', { type: 'button', class: 'btn', onclick: retry }, 'Qayta urinish')) : p));
+  }
+  function showWorking() {
+    el.status.replaceChildren(h('div', { class: 'working' },
+      h('div', { class: 'scan', 'aria-hidden': 'true', html: ICONS.leaf }),
+      h('div', { class: 'grow' },
+        h('p', { class: 'w-title', text: 'Barg tahlil qilinmoqda…' }),
+        h('p', { class: 'w-sub', text: 'Odatda 5–20 soniya.' })),
+      h('button', { type: 'button', class: 'btn', onclick: () => state.ctl && state.ctl.abort() }, 'Toʻxtatish')));
+  }
+
+  /* ---------- Diagnosis ---------- */
+  const str = (x, n) => (typeof x === 'string' ? x.trim().slice(0, n) : '');
+  const list = (x) => (Array.isArray(x) ? x.filter((s) => typeof s === 'string' && s.trim()).slice(0, 5).map((s) => s.trim().slice(0, 220)) : []);
+  function normalize(r) {
+    r = r && typeof r === 'object' && !Array.isArray(r) ? r : {};
+    return {
+      rasm_turi: ['osimlik', 'osimlik_emas', 'aniq_emas'].includes(r.rasm_turi) ? r.rasm_turi : 'osimlik',
+      ekin: str(r.ekin, 60),
+      holat: STATUS[r.holat] ? r.holat : 'noaniq',
+      tashxis: str(r.tashxis, 120),
+      ilmiy_nomi: str(r.ilmiy_nomi, 120),
+      ishonch: clamp(Math.round(Number(r.ishonch) || 0), 0, 100),
+      ogirlik: SEVERITY[r.ogirlik] ? r.ogirlik : '',
+      belgilar: list(r.belgilar),
+      davolash_kimyoviy: list(r.davolash_kimyoviy),
+      davolash_organik: list(r.davolash_organik),
+      oldini_olish: list(r.oldini_olish),
+      muqobil_tashxislar: Array.isArray(r.muqobil_tashxislar)
+        ? r.muqobil_tashxislar.filter((m) => m && typeof m.nomi === 'string' && m.nomi.trim()).slice(0, 2)
+            .map((m) => ({ nomi: str(m.nomi, 100), ishonch: clamp(Math.round(Number(m.ishonch) || 0), 0, 100) }))
+        : [],
+      qoshimcha_rasm: str(r.qoshimcha_rasm, 240),
+      ovoz_matni: str(r.ovoz_matni, 600)
+    };
+  }
+  function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => resolve(String(fr.result).split(',')[1] || '');
+      fr.onerror = () => reject(fr.error);
+      fr.readAsDataURL(blob);
+    });
+  }
+
+  async function diagnose() {
+    if (state.busy || !state.blob) return;
+    const ctl = new AbortController();
+    state.ctl = ctl; state.busy = true; updateGo(); showWorking();
+    const crop = el.crop.value, note = el.note.value.trim().slice(0, 500);
+    const thumb = state.thumb;
+    try {
+      const image = await blobToBase64(state.blob);
+      let resp;
+      try {
+        resp = await fetch('/api/diagnose', {
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ image, mime: 'image/jpeg', crop, note }), signal: ctl.signal
+        });
+      } catch (e) {
+        if (e && e.name === 'AbortError') throw e;
+        throw { code: 'network' };
+      }
+      let data = null;
+      try { data = await resp.json(); } catch (e) { data = null; }
+      if (!resp.ok) throw { code: (data && data.error) || 'upstream' };
+      const r = normalize(data);
+      if (r.rasm_turi === 'osimlik_emas') {
+        showCallout('warn', 'Rasmda oʻsimlik bargi koʻrinmadi. Bargni yaqindan, yorugʻda suratga oling.');
+        return;
+      }
+      el.status.replaceChildren();
+      const entry = Object.assign({}, r, { thumb, crop_hint: crop, note, createdAt: Date.now() });
+      renderResult(entry, false);
+      el.result.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      saveEntry(entry);
+    } catch (e) {
+      if (e && e.name === 'AbortError') { el.status.replaceChildren(); return; }
+      const code = (e && e.code) || 'upstream';
+      showCallout(code === 'config' ? 'warn' : 'bad', ERR[code] || ERR.upstream, RETRYABLE.has(code) || !ERR[code] ? diagnose : null);
+    } finally {
+      if (state.ctl === ctl) state.ctl = null;
+      state.busy = false; updateGo();
+    }
+  }
+  el.form.addEventListener('submit', (e) => { e.preventDefault(); diagnose(); });
+
+  /* ---------- Speech ---------- */
+  const canSpeak = 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function';
+  if (canSpeak) { try { window.speechSynthesis.getVoices(); } catch (e) {} }
+  let speakingBtn = null;
+  function setSpeaking(btn, on) {
+    if (!btn) return;
+    btn.setAttribute('aria-pressed', String(on));
+    const label = btn.querySelector('.lbl');
+    if (label) label.textContent = on ? 'Toʻxtatish' : 'Ovoz bilan tinglash';
+  }
+  function pickVoice() {
+    let vs = [];
+    try { vs = window.speechSynthesis.getVoices() || []; } catch (e) {}
+    const uz = vs.find((v) => /^uz/i.test(v.lang));
+    if (uz) return { voice: uz, note: '' };
+    const tr = vs.find((v) => /^tr/i.test(v.lang));
+    if (tr) return { voice: tr, note: 'Qurilmada oʻzbek ovozi topilmadi, turkcha ovoz bilan oʻqilmoqda.' };
+    return { voice: null, note: 'Qurilmada oʻzbek ovozi yoʻq, talaffuz aniq boʻlmasligi mumkin.' };
+  }
+  function speechText(r) {
+    if (r.ovoz_matni) return r.ovoz_matni;
+    const parts = [r.ekin, r.tashxis, 'Ishonch ' + r.ishonch + ' foiz'];
+    if (r.davolash_organik[0]) parts.push(r.davolash_organik[0]);
+    return parts.filter(Boolean).join('. ');
+  }
+  function speak(text, btn, noteEl) {
+    const synth = window.speechSynthesis;
+    if (speakingBtn) {
+      const was = speakingBtn; speakingBtn = null;
+      try { synth.cancel(); } catch (e) {}
+      setSpeaking(was, false);
+      if (was === btn) return;
+    }
+    const pick = pickVoice();
+    const u = new SpeechSynthesisUtterance(text.replace(/[ʻʼ‘’]/g, ''));
+    u.lang = pick.voice ? pick.voice.lang : 'uz-UZ';
+    if (pick.voice) u.voice = pick.voice;
+    u.rate = 0.95;
+    const done = () => { if (speakingBtn === btn) { speakingBtn = null; setSpeaking(btn, false); } };
+    u.onend = done; u.onerror = done;
+    noteEl.textContent = pick.note; noteEl.hidden = !pick.note;
+    speakingBtn = btn; setSpeaking(btn, true);
+    try { synth.speak(u); } catch (e) { done(); }
+  }
+
+  /* ---------- Field slip ---------- */
+  function field(label, value) { return h('div', null, h('dt', { text: label }), h('dd', { text: value })); }
+  function bullets(items) { return h('ul', null, items.map((t) => h('li', { text: t }))); }
+
+  function renderSlip(r, opts) {
+    const { sample = false, thumb = null, date = null, entryId = null } = opts || {};
+    const st = STATUS[r.holat] || STATUS.noaniq;
+    const conf = clamp(Math.round(Number(r.ishonch) || 0), 0, 100);
+    const low = r.holat === 'noaniq' || conf < LOW;
+
+    const thumbBox = h('div', { class: 'thumb' });
+    if (thumb) thumbBox.append(h('img', { src: thumb, alt: 'Tekshirilgan barg rasmi' }));
+    else if (sample) thumbBox.innerHTML = LEAF_SAMPLE_SVG;
+
+    const title = r.tashxis || (r.holat === 'soglom' ? 'Kasallik belgisi topilmadi' : 'Aniqlab boʻlmadi');
+    const head = h('div', { class: 'slip-head' }, thumbBox,
+      h('div', { class: 'slip-id' },
+        h('div', { class: 'slip-meta' }, h('span', { class: 'chip ' + st.cls, text: st.label }), sample && h('span', { class: 'tag', text: 'NAMUNA' })),
+        h('h3', { class: 'dx', text: title }),
+        r.ilmiy_nomi && h('p', { class: 'latin', text: r.ilmiy_nomi })));
+
+    const fields = h('dl', { class: 'fields' },
+      field('EKIN', r.ekin || '—'),
+      field('DARAJA', SEVERITY[r.ogirlik] || '—'),
+      field('SANA', date ? fmtDate(date) : (sample ? 'Namuna' : '—')));
+
+    const meter = h('div', { class: 'meter' + (low ? ' is-low' : '') },
+      h('div', { class: 'meter-top' }, h('span', { class: 'mono-label', text: 'ISHONCH' }), h('span', { class: 'meter-val', text: conf + '%' })),
+      h('div', { class: 'meter-track', role: 'img', 'aria-label': 'Ishonch ' + conf + ' foiz, agronom chegarasi ' + LOW + ' foiz' },
+        h('div', { class: 'meter-fill', style: { width: conf + '%' } }),
+        h('div', { class: 'meter-tick', style: { left: LOW + '%' } })),
+      h('div', { class: 'meter-scale', 'aria-hidden': 'true' },
+        h('span', { text: '0' }), h('span', { class: 'tick-label', style: { left: LOW + '%' }, text: LOW + ' · agronom chegarasi' }), h('span', { text: '100' })));
+
+    const body = h('div', { class: 'slip-body' }, meter);
+    if (low) {
+      body.append(h('p', { class: 'callout warn' }, h('strong', { text: 'Ishonch past. ' }),
+        r.qoshimcha_rasm || 'Bargni yaqinroqdan, kunduzgi yorugʻda qayta suratga oling yoki natijani agronomga koʻrsating.'));
+    } else if (r.ogirlik === 'ogir' && r.holat !== 'soglom') {
+      body.append(h('p', { class: 'callout bad' }, h('strong', { text: 'Ogʻir holat. ' }), 'Choralarni kechiktirmang va agronom bilan maslahatlashing.'));
+    }
+    if (r.belgilar.length) body.append(h('section', { class: 'block' }, h('h3', { text: 'Rasmda koʻrinayotgan belgilar' }), bullets(r.belgilar)));
+    if (r.davolash_kimyoviy.length || r.davolash_organik.length) {
+      const cols = h('div', { class: 'treat' });
+      if (r.davolash_kimyoviy.length) cols.append(h('div', null, h('h4', { text: 'Kimyoviy' }), bullets(r.davolash_kimyoviy)));
+      if (r.davolash_organik.length) cols.append(h('div', null, h('h4', { text: 'Organik va agrotexnik' }), bullets(r.davolash_organik)));
+      body.append(h('section', { class: 'block' }, h('h3', { text: 'Davolash' }), cols));
+    }
+    if (r.oldini_olish.length) body.append(h('section', { class: 'block' }, h('h3', { text: 'Oldini olish' }), bullets(r.oldini_olish)));
+    if (r.muqobil_tashxislar.length) {
+      body.append(h('p', { class: 'alt' }, 'Boshqa ehtimollar: ' + r.muqobil_tashxislar.map((m) => m.nomi + ' (' + m.ishonch + '%)').join(', ')));
+    }
+    if (r.davolash_kimyoviy.length) {
+      body.append(h('p', { class: 'label-note', text: 'Preparat dozasi va ishlov oraligʻini yorliqdan oling. Shubha boʻlsa, agronom bilan maslahatlashing.' }));
+    }
+
+    const actions = h('div', { class: 'actions' });
+    if (canSpeak) {
+      const note = h('p', { class: 'speak-note', hidden: true });
+      const btn = h('button', { type: 'button', class: 'btn', 'aria-pressed': 'false' }, icon('speaker'), h('span', { class: 'lbl', text: 'Ovoz bilan tinglash' }));
+      btn.addEventListener('click', () => speak(speechText(r), btn, note));
+      actions.append(btn, note);
+    }
+    if (entryId) {
+      if (state.confirmId === entryId) {
+        actions.append(h('div', { class: 'confirm' },
+          h('p', { text: 'Bu yozuv oʻchirilsinmi?' }),
+          h('button', { type: 'button', class: 'btn btn-danger', onclick: () => removeEntry(entryId) }, 'Ha, oʻchirish'),
+          h('button', { type: 'button', class: 'btn', onclick: () => { state.confirmId = null; renderJournal(); } }, 'Bekor qilish')));
+      } else {
+        actions.append(h('button', { type: 'button', class: 'btn btn-danger', onclick: () => { state.confirmId = entryId; renderJournal(); } }, icon('trash'), 'Oʻchirish'));
+      }
+    }
+    if (actions.childNodes.length) body.append(actions);
+    return h('article', { class: 'slip' }, head, fields, body);
+  }
+
+  function renderResult(entry, sample) {
+    el.resultLabel.textContent = sample ? 'Namuna natija' : 'Natija';
+    el.resultHint.hidden = !sample;
+    el.result.replaceChildren(renderSlip(entry, { sample, thumb: entry.thumb || null, date: entry.createdAt || null }));
+  }
+
+  /* ---------- Journal (Supabase) ---------- */
+  let sb = null;
+  function showJNote(msg) { el.jnote.textContent = msg; el.jnote.hidden = !msg; }
+  function authMsg(kind, msg) {
+    el.authMsg.className = 'callout ' + kind;
+    el.authMsg.textContent = msg; el.authMsg.hidden = !msg;
+  }
+  function authError(e) {
+    const m = ((e && e.message) || '').toLowerCase();
+    if (m.includes('invalid login')) return 'Email yoki parol notoʻgʻri.';
+    if (m.includes('not confirmed')) return 'Email hali tasdiqlanmagan. Pochtangizdagi havolani bosing.';
+    if (m.includes('already') && m.includes('regist')) return 'Bu email allaqachon roʻyxatdan oʻtgan. “Kirish” tugmasini bosing.';
+    if (m.includes('rate limit') || m.includes('too many')) return 'Urinishlar juda koʻp. Birozdan soʻng qayta urinib koʻring.';
+    if (m.includes('password')) return 'Parol kamida 6 belgidan iborat boʻlishi kerak.';
+    if (m.includes('email')) return 'Email manzilini tekshiring.';
+    return 'Kirib boʻlmadi. Qayta urinib koʻring.';
+  }
+  function setAuthBusy(on) { el.btnLogin.disabled = el.btnSignup.disabled = on; }
+
+  const journalReady = (async () => {
+    let cfg = null;
+    try { const r = await fetch('/api/config'); if (r.ok) cfg = await r.json(); } catch (e) {}
+    if (!cfg || !cfg.supabaseUrl || !cfg.supabaseKey) { showJNote('Jurnal hali sozlanmagan: Vercelʼda SUPABASE_URL va SUPABASE_ANON_KEY kiritilmagan.'); return; }
+    if (!window.supabase || typeof window.supabase.createClient !== 'function') { showJNote('Jurnal kutubxonasi yuklanmadi. Internetni tekshirib, sahifani yangilang.'); return; }
+    try { sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey); } catch (e) { showJNote('Jurnalga ulanib boʻlmadi.'); return; }
+    sb.auth.onAuthStateChange((_event, session) => { setTimeout(() => setUser(session ? session.user : null), 0); });
+    try { const { data } = await sb.auth.getSession(); setUser(data && data.session ? data.session.user : null); } catch (e) { setUser(null); }
+  })();
+
+  function setUser(u) {
+    const prev = state.user ? state.user.id : null;
+    const next = u ? u.id : null;
+    state.user = u || null;
+    el.auth.hidden = !!u;
+    el.account.hidden = !u;
+    el.accountEmail.textContent = u && u.email ? u.email : '';
+    if (u) authMsg('', '');
+    if (prev !== next || (next && !state.entries.length && !state.loading)) {
+      state.entries = []; state.openId = null; state.confirmId = null;
+      if (u) loadEntries(); else renderJournal();
+    }
+  }
+
+  async function loadEntries() {
+    if (!sb || !state.user) return;
+    state.loading = true; renderJournal();
+    const { data, error } = await sb.from('journal')
+      .select('id, created_at, crop_hint, note, result, thumb')
+      .order('created_at', { ascending: false }).limit(200);
+    state.loading = false;
+    if (error) {
+      const missing = error.code === '42P01' || error.code === 'PGRST205' || /does not exist|could not find the table/i.test(error.message || '');
+      showJNote(missing ? 'Supabaseʼda jurnal jadvali yoʻq: supabase/schema.sql faylini SQL Editorʼda ishga tushiring.' : 'Jurnalni yuklab boʻlmadi. Sahifani yangilang.');
+      renderJournal();
+      return;
+    }
+    showJNote('');
+    state.entries = (data || []).map((row) => Object.assign({}, normalize(row.result), {
+      id: row.id, createdAt: Date.parse(row.created_at), thumb: row.thumb, crop_hint: row.crop_hint, note: row.note
+    }));
+    renderJournal();
+  }
+
+  async function saveEntry(entry) {
+    await journalReady;
+    if (!sb) return;
+    if (!state.user) { toast('Natijani saqlash uchun “Dala jurnali”ga kiring'); return; }
+    const result = normalize(entry);
+    const { error } = await sb.from('journal').insert({ crop_hint: entry.crop_hint || null, note: entry.note || null, result, thumb: entry.thumb || null });
+    if (error) { toast('Jurnalga saqlab boʻlmadi'); return; }
+    toast('Dala jurnaliga saqlandi');
+    loadEntries();
+  }
+
+  async function removeEntry(id) {
+    if (!sb) return;
+    const { error } = await sb.from('journal').delete().eq('id', id);
+    if (error) { toast('Oʻchirib boʻlmadi'); return; }
+    state.openId = null; state.confirmId = null;
+    toast('Yozuv oʻchirildi');
+    loadEntries();
+  }
+
+  el.authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!sb) return;
+    const email = el.email.value.trim(), password = el.password.value;
+    if (!email || password.length < 6) { authMsg('warn', 'Email va kamida 6 belgili parol kiriting.'); return; }
+    setAuthBusy(true); authMsg('', '');
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    setAuthBusy(false);
+    if (error) authMsg('bad', authError(error));
+  });
+  el.btnSignup.addEventListener('click', async () => {
+    if (!sb) return;
+    const email = el.email.value.trim(), password = el.password.value;
+    if (!email || password.length < 6) { authMsg('warn', 'Email va kamida 6 belgili parol kiriting.'); return; }
+    setAuthBusy(true); authMsg('', '');
+    const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: location.origin } });
+    setAuthBusy(false);
+    if (error) authMsg('bad', authError(error));
+    else if (!data || !data.session) authMsg('info', 'Emailingizga tasdiqlash havolasi yuborildi. Uni bosing, soʻng shu yerda kiring.');
+  });
+  el.btnLogout.addEventListener('click', async () => { if (sb) await sb.auth.signOut(); });
+
+  function stat(n, label) { return h('div', { class: 'stat' }, h('b', { text: String(n) }), h('span', { text: label })); }
+  const okThumb = (t) => (typeof t === 'string' && t.startsWith('data:image/') ? t : null);
+
+  function entryRow(e) {
+    const st = STATUS[e.holat] || STATUS.noaniq;
+    const open = state.openId === e.id;
+    const detailId = 'jd-' + e.id;
+    const thumb = okThumb(e.thumb);
+    const btn = h('button', {
+      type: 'button', class: 'entry-btn', 'aria-expanded': String(open), 'aria-controls': detailId, 'data-id': e.id,
+      onclick: () => { state.openId = open ? null : e.id; state.confirmId = null; state.focusId = e.id; renderJournal(); }
+    },
+      thumb ? h('img', { src: thumb, alt: '' }) : h('span', { class: 'thumb-ph' }),
+      h('span', { class: 'entry-main' },
+        h('span', { class: 'entry-title', text: e.tashxis || st.label }),
+        h('span', { class: 'entry-meta', text: [e.ekin, fmtDate(e.createdAt)].filter(Boolean).join(' · ') })),
+      h('span', { class: 'entry-conf' }, h('span', { class: 'chip ' + st.cls, text: st.label }), h('span', { text: e.ishonch + '%' })));
+    const li = h('li', { class: 'entry' }, btn);
+    if (open) li.append(h('div', { class: 'entry-detail', id: detailId }, renderSlip(e, { thumb, date: e.createdAt, entryId: e.id })));
+    return li;
+  }
+
+  function renderJournal() {
+    const n = state.entries.length;
+    el.jcount.textContent = String(n); el.jcount.hidden = n === 0;
+    if (!state.user) { el.jsum.hidden = true; el.jlist.hidden = true; return; }
+    el.jlist.hidden = false;
+    if (state.loading && !n) {
+      el.jsum.hidden = true;
+      el.jlist.replaceChildren(h('li', { class: 'empty' }, h('p', { text: 'Jurnal yuklanmoqda…' })));
+      return;
+    }
+    if (!n) {
+      el.jsum.hidden = true;
+      el.jlist.replaceChildren(h('li', { class: 'empty' },
+        h('p', { class: 'empty-title', text: 'Hali tekshiruv yoʻq' }),
+        h('p', { text: 'Birinchi barg rasmini tekshiring — natija rasm va sana bilan shu yerda saqlanadi.' }),
+        h('button', { type: 'button', class: 'btn', onclick: () => go('tekshirish') }, 'Rasm tekshirish')));
+      return;
+    }
+    const by = {};
+    state.entries.forEach((e) => { by[e.holat] = (by[e.holat] || 0) + 1; });
+    el.jsum.hidden = false;
+    el.jsum.replaceChildren(stat(n, 'Jami tekshiruv'), stat(by.kasallik || 0, 'Kasallik'), stat(by.zararkunanda || 0, 'Zararkunanda'), stat(by.oziq_yetishmasligi || 0, 'Oziq yetishmasligi'), stat(by.soglom || 0, 'Sogʻlom'));
+    el.jlist.replaceChildren(...state.entries.map(entryRow));
+    if (state.focusId) {
+      const b = Array.from(el.jlist.querySelectorAll('.entry-btn')).find((x) => x.dataset.id === state.focusId);
+      if (b) b.focus();
+      state.focusId = null;
+    }
+  }
+
+  /* ---------- Start ---------- */
+  renderResult(SAMPLE, true);
+  go(location.hash.slice(1));
+})();
+</script>
+</body>
+</html>
